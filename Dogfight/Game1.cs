@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Dogfight
 {
@@ -9,6 +10,16 @@ namespace Dogfight
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        Matrix world;
+        Matrix view;
+        Matrix proj;
+
+        List<Enemy> enemyList;
+
+        public int health;
+        public float speed;
+        public int wave;
+        
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
