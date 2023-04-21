@@ -14,8 +14,17 @@ namespace Dogfight
         Matrix view;
         Matrix proj;
 
+        Camera camera = new Camera();
+        Player player = new Player();
         List<Enemy> enemyList;
 
+        KeyboardState lastkeyboardState = new KeyboardState();
+        KeyboardState currentKeyboardState = new KeyboardState();
+
+        Model shipModel;
+        Model groundModel;
+
+        bool enableCamSpring;
         public int health;
         public float speed;
         public int wave;
@@ -30,7 +39,15 @@ namespace Dogfight
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            camera.DesiredPositionOffset = new Vector3(0.0f, 2000.0f, 3500.0f);
+            camera.LookAtOffset = new Vector3(0.0f, 150.0f, 0.0f);
+            camera.NearPlaneDist = 10.0f;
+            camera.FarPlaneDist = 100000.0f;
+            camera.AspectRatio = (float)_graphics.GraphicsDevice.Viewport.Width / (float)_graphics.GraphicsDevice.Viewport.Height;
+            enableCamSpring = false;
 
+            UpdateChaseTarget();
+            camera.Reset();
             base.Initialize();
         }
 
@@ -41,12 +58,39 @@ namespace Dogfight
             // TODO: use this.Content to load your game content here
         }
 
+        private void UpdateChaseTarget()
+        {
+            camera.ChasePos = player.pos;
+            camera.ChaseDir = player.dir;
+            camera.Up = player.up;
+        }
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             // TODO: Add your update logic here
+            lastkeyboardState = currentKeyboardState;
+            currentKeyboardState = Keyboard.GetState();
+
+            if (lastkeyboardState.IsKeyDown(Keys.A) && currentKeyboardState.IsKeyDown(Keys.A))
+            {
+                enableCamSpring = !enableCamSpring;
+            }
+
+            player.Update(gameTime);
+
+            UpdateChaseTarget();
+
+            if (enableCamSpring)
+            {
+                camera.Update(gameTime);
+            }
+            else
+            {
+                camera.Reset();
+            }
 
             base.Update(gameTime);
         }
@@ -58,6 +102,21 @@ namespace Dogfight
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+
+        private void DrawModel(Model model, Matrix world)
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.World = world;
+                    effect.View = camera.View;
+                    effect.Projection = camera.projectionView;
+                }
+                mesh.Draw();
+            }
         }
     }
 }
