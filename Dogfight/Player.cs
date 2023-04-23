@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Dogfight
 {
     internal class Player
     {
-        private const float minimumAltitude = 350.0f;
+        private const float minimumAltitude = 500.0f;
 
         public Vector3 pos;
         public Vector3 dir;
@@ -18,6 +19,9 @@ namespace Dogfight
         public Vector3 velocity;
         private Vector3 right;
         public Vector3 Right { get { return right; } }
+
+        MouseState mState;
+        Vector2 mousePos;
 
         private const float rotationRate = 1.5f;
         private const float mass = 1.0f;
@@ -38,28 +42,39 @@ namespace Dogfight
 
         public Player() { Reset(); }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, List<Enemy> enemyList, Viewport view2D, Matrix proj, Matrix view, Matrix globalWorld)
         {
             KeyboardState keyboardState = Keyboard.GetState();
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             //rotation
-            Vector2 rotationAmount = new Vector2(0, 0);
-            if (keyboardState.IsKeyDown(Keys.Left))
+            Vector3 rotationAmount = new Vector3(0, 0, 0);
+            if (keyboardState.IsKeyDown(Keys.A))
             {
-                rotationAmount.X = 1.0f;
+                rotationAmount.Z = 1.0f;
             }
-            if (keyboardState.IsKeyDown(Keys.Right))
+            if (keyboardState.IsKeyDown(Keys.D))
             {
-                rotationAmount.X = -1.0f;
+                rotationAmount.Z = -1.0f;
             }
-            if (keyboardState.IsKeyDown(Keys.Up))
+
+            //Todo: Add rotation with mouse
+            mState = Mouse.GetState();
+            mousePos = new Vector2(mState.X, mState.Y);
+            float distanceFromCenter = Vector2.Distance(new Vector2(200, 200), mousePos);
+            if (distanceFromCenter < 50) //Firing Range
             {
-                rotationAmount.Y = 1.0f;
+                foreach(Enemy enemy in enemyList)
+                {
+                    Vector2 enemyPos2D = new Vector2(view2D.Project(enemy.Pos, proj, view, globalWorld).X, view2D.Project(enemy.Pos, proj, view, globalWorld).Y);
+                    if (Vector2.Distance(enemyPos2D, mousePos) <= 20) {
+                        enemy.Die();
+                    }
+                }
             }
-            if (keyboardState.IsKeyDown(Keys.Down))
-            {
-                rotationAmount.Y = -1.0f;
+            else { //Rotating 
+                rotationAmount.X = mState.X / 20;
+                rotationAmount.Y = mState.Y / 20;
             }
 
             rotationAmount = rotationAmount * rotationRate * elapsed;
@@ -69,7 +84,7 @@ namespace Dogfight
                 rotationAmount.X = -rotationAmount.X;
             }
 
-            Matrix rotationMatrix = Matrix.CreateFromAxisAngle(right, rotationAmount.Y) * Matrix.CreateRotationY(rotationAmount.X);
+            Matrix rotationMatrix = Matrix.CreateFromAxisAngle(right, rotationAmount.Y) * Matrix.CreateRotationY(rotationAmount.X) * Matrix.CreateRotationZ(rotationAmount.Z);
             dir = Vector3.TransformNormal(dir, rotationMatrix);
             up = Vector3.TransformNormal(up, rotationMatrix);
 
@@ -81,9 +96,12 @@ namespace Dogfight
 
             //ThrustAmount
             float thrustAmount = 0;
-            if (keyboardState.IsKeyDown(Keys.Space))
+            if (keyboardState.IsKeyDown(Keys.W))
             {
-                thrustAmount = 1.0f;
+                thrustAmount += 1.0f;
+            }
+            if (keyboardState.IsKeyDown(Keys.S)) {
+                thrustAmount -= 1.0f;
             }
 
             Vector3 force = dir * thrustAmount * thrustForce;
@@ -93,7 +111,12 @@ namespace Dogfight
             velocity *= dragForce;
 
             pos += velocity * elapsed;
-            pos.Y = Math.Max(pos.Y, minimumAltitude);
+            pos.Y = Math.Max(pos.Y, -minimumAltitude);
+            pos.Y = Math.Min(pos.Y, minimumAltitude);
+            pos.X = Math.Max(pos.X, -minimumAltitude);
+            pos.X = Math.Min(pos.X, minimumAltitude);
+            pos.Z = Math.Max(pos.Z, -minimumAltitude);
+            pos.Z = Math.Min(pos.Z, minimumAltitude);
 
             //world matrix
             world = Matrix.Identity;

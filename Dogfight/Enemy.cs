@@ -25,5 +25,9 @@ namespace Dogfight
         {
             
         }
+
+        public void Die() {
+            
+        }
     }
 }

@@ -14,6 +14,8 @@ namespace Dogfight
         Matrix view;
         Matrix proj;
 
+        Viewport view2D;
+
         Camera camera = new Camera();
         Player player = new Player();
         List<Enemy> enemyList;
@@ -44,10 +46,15 @@ namespace Dogfight
             camera.NearPlaneDist = 10.0f;
             camera.FarPlaneDist = 100000.0f;
             camera.AspectRatio = (float)_graphics.GraphicsDevice.Viewport.Width / (float)_graphics.GraphicsDevice.Viewport.Height;
-            enableCamSpring = false;
+            enableCamSpring = true;
+            wave = 0;
+
+            view2D = new Viewport(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
 
             UpdateChaseTarget();
             camera.Reset();
+            newWave(wave);
+
             base.Initialize();
         }
 
@@ -65,6 +72,13 @@ namespace Dogfight
             camera.Up = player.up;
         }
 
+        private void newWave(int waveNumber) {
+            for (int i = 0; i < waveNumber; i++)
+            {
+                enemyList.Add(new Enemy(new Vector3(0, 0, 0), new Vector3(0, 0, 0), (waveNumber / 5) + 1)); //Todo: Figure out placement of enemies
+            }
+        }
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -74,30 +88,26 @@ namespace Dogfight
             lastkeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
 
-            if (lastkeyboardState.IsKeyDown(Keys.A) && currentKeyboardState.IsKeyDown(Keys.A))
-            {
-                enableCamSpring = !enableCamSpring;
-            }
-
-            player.Update(gameTime);
+            player.Update(gameTime, enemyList, view2D, proj, view, world);
 
             UpdateChaseTarget();
+            camera.Update(gameTime);
 
-            if (enableCamSpring)
-            {
-                camera.Update(gameTime);
+            if (enemyList.Count == 0) {
+                wave++;
+                newWave(wave);
+            } else {
+                foreach (Enemy enemy in enemyList)
+                {
+                    enemy.Update(gameTime);
+                }
             }
-            else
-            {
-                camera.Reset();
-            }
-
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
 
