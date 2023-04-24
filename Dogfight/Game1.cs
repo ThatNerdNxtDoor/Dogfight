@@ -92,7 +92,7 @@ namespace Dogfight
             lastkeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
 
-            player.Update(gameTime, enemyList, view2D, proj, view, world);
+            player.Update(gameTime, _graphics, enemyList, view2D, proj, view, world);
 
             UpdateChaseTarget();
             camera.Update(gameTime);

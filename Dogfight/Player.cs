@@ -42,7 +42,7 @@ namespace Dogfight
 
         public Player() { Reset(); }
 
-        public void Update(GameTime gameTime, List<Enemy> enemyList, Viewport view2D, Matrix proj, Matrix view, Matrix globalWorld)
+        public void Update(GameTime gameTime, GraphicsDeviceManager graphicsDevice, List<Enemy> enemyList, Viewport view2D, Matrix proj, Matrix view, Matrix globalWorld)
         {
             KeyboardState keyboardState = Keyboard.GetState();
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -61,7 +61,8 @@ namespace Dogfight
             //Todo: Add rotation with mouse
             mState = Mouse.GetState();
             mousePos = new Vector2(mState.X, mState.Y);
-            float distanceFromCenter = Vector2.Distance(new Vector2(200, 200), mousePos);
+            Vector2 center = new Vector2(graphicsDevice.PreferredBackBufferWidth / 2, graphicsDevice.PreferredBackBufferHeight / 2);
+            float distanceFromCenter = Vector2.Distance(center, mousePos);
             if (distanceFromCenter < 50) //Firing Range
             {
                 foreach(Enemy enemy in enemyList)
@@ -73,8 +74,8 @@ namespace Dogfight
                 }
             }
             else { //Rotating 
-                rotationAmount.X = mState.X / 20;
-                rotationAmount.Y = mState.Y / 20;
+                rotationAmount.X = (mState.X - center.X) / 50;
+                rotationAmount.Y = (mState.Y - center.Y) / 50;
             }
 
             rotationAmount = rotationAmount * rotationRate * elapsed;
