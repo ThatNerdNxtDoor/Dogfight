@@ -123,6 +123,7 @@ namespace Dogfight
             world.Forward = dir;
             world.Up = up;
             world.Right = right;
+            world *= Matrix.CreateScale(100f);
             world.Translation = pos;
         }
     }

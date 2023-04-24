@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Dogfight
 {
@@ -18,13 +20,13 @@ namespace Dogfight
 
         Camera camera = new Camera();
         Player player = new Player();
-        List<Enemy> enemyList;
+        List<Enemy> enemyList = new List<Enemy>();
 
         KeyboardState lastkeyboardState = new KeyboardState();
         KeyboardState currentKeyboardState = new KeyboardState();
 
         Model shipModel;
-        Model groundModel;
+        Model skybox;
 
         bool enableCamSpring;
         public int health;
@@ -63,6 +65,8 @@ namespace Dogfight
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            this.shipModel = Content.Load<Model>("playership");
+            this.skybox = Content.Load<Model>("skybox");
         }
 
         private void UpdateChaseTarget()
@@ -110,6 +114,8 @@ namespace Dogfight
             GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
+            Debug.WriteLine("" + camera.Pos + ", " + player.pos);
+            DrawModel(shipModel, player.World);
 
             base.Draw(gameTime);
         }
