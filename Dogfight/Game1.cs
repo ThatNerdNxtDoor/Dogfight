@@ -15,7 +15,7 @@ namespace Dogfight
         /// <summary>
         /// The global world matrix
         /// </summary>
-        Matrix world;
+        Matrix world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
 
         /// <summary>
         /// ISAIAH HALP
@@ -180,22 +180,26 @@ namespace Dogfight
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
             Debug.WriteLine("" + camera.Pos + ", " + player.pos);
-            DrawModel(shipModel, player.World);
-
+            DrawModel(skybox, world * Matrix.CreateScale(10000f), true);
+            DrawModel(shipModel, player.World, false);
             base.Draw(gameTime);
         }
 
-        private void DrawModel(Model model, Matrix world)
+        private void DrawModel(Model model, Matrix world, bool skybox)
         {
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
+                    if (skybox) {
+                        effect.LightingEnabled = true;
+                        effect.AmbientLightColor = new Vector3(0f, 0f, 0f);
+                    }
                     effect.World = world;
                     effect.View = camera.View;
                     effect.Projection = camera.projectionView;

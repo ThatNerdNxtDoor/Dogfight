@@ -11,7 +11,7 @@ namespace Dogfight
 {
     internal class Player
     {
-        private const float minimumAltitude = 500.0f;
+        private const float minimumAltitude = 5500.0f;
 
         public Vector3 pos;
         public Vector3 dir;
@@ -33,7 +33,7 @@ namespace Dogfight
 
         public void Reset()
         {
-            pos = new Vector3(0, minimumAltitude, 0);
+            pos = new Vector3(0, 250f, 0);
             dir = Vector3.Forward;
             up = Vector3.Up;
             right = Vector3.Right;
@@ -63,7 +63,7 @@ namespace Dogfight
             mousePos = new Vector2(mState.X, mState.Y);
             Vector2 center = new Vector2(graphicsDevice.PreferredBackBufferWidth / 2, graphicsDevice.PreferredBackBufferHeight / 2);
             float distanceFromCenter = Vector2.Distance(center, mousePos);
-            if (distanceFromCenter < 50) //Firing Range
+            if (distanceFromCenter < 120) //Firing Range
             {
                 foreach(Enemy enemy in enemyList)
                 {
