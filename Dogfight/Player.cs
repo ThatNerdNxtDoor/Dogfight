@@ -12,7 +12,7 @@ namespace Dogfight
     internal class Player
     {
         /// <summary>
-        /// What is this?
+        /// The limit on how much the player can move away from it's starting position
         /// </summary>
         private const float altitudeBoundary = 100000.0f;
 
@@ -50,7 +50,12 @@ namespace Dogfight
         /// <summary>
         /// The mouse's position
         /// </summary>
-        Vector2 mousePos;
+        public Vector2 mousePos;
+
+        /// <summary>
+        /// The position the portion of the crosshair that is drawn within the circle is located
+        /// </summary>
+        public Vector2 mousePosInCircle;
 
         /// <summary>
         /// How quickly the ship rotates
@@ -68,8 +73,7 @@ namespace Dogfight
         private const float thrustForce = 12000.0f;
         
         /// <summary>
-        /// What is this? <- Mitch
-        /// It's the drag force factor to simulate drag so that the ship can slow down, Mitch.
+        /// The drag force factor to simulate drag so that the ship can slow down.
         /// </summary>
         private const float dragForce = 0.97f;
 
@@ -96,6 +100,17 @@ namespace Dogfight
 
         public Player() { Reset(); }
 
+        /// <summary>
+        /// Calculate the position to draw the portion of the crosshair that stays inside the circle
+        /// </summary>
+        /// <param name="center">The center of the circle</param>
+        /// <param name="mousePos">The mouse's position</param>
+        /// <param name="radius">The radius of the circle</param>
+        private void _calculateMousePosInCircle(Vector2 center, Vector2 mousePos, float radius)
+        {
+            this.mousePosInCircle = Vector2.Normalize(mousePos - center) * radius + center;
+        }
+
         public void Update(GameTime gameTime, GraphicsDeviceManager graphicsDevice, List<Enemy> enemyList, Viewport view2D, Matrix proj, Matrix view, Matrix globalWorld)
         {
             KeyboardState keyboardState = Keyboard.GetState();
@@ -119,6 +134,7 @@ namespace Dogfight
             float distanceFromCenter = Vector2.Distance(center, mousePos);
             if (distanceFromCenter < 150) //Firing Range
             {
+                mousePosInCircle = mousePos;
                 foreach(Enemy enemy in enemyList)
                 {
                     Vector2 enemyPos2D = new Vector2(view2D.Project(enemy.Pos, proj, view, globalWorld).X, view2D.Project(enemy.Pos, proj, view, globalWorld).Y);
@@ -128,6 +144,7 @@ namespace Dogfight
                 }
             }
             else if (new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight).Contains(mState.Position)){ //Rotating 
+                _calculateMousePosInCircle(center, mousePos, 150);
                 rotationAmount.X = -(mState.X - center.X) / 100;
                 rotationAmount.Y = -(mState.Y - center.Y) / 100;
             }

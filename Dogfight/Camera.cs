@@ -90,7 +90,7 @@ namespace Dogfight
         /// <summary>
         /// Stiffness factor of spring
         /// </summary>
-        private float stiffness = 5000f;
+        private float stiffness = 3000f;
         public float Stiffness { get { return stiffness; } set { stiffness = value; } }
 
         /// <summary>

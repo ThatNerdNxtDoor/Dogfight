@@ -70,6 +70,16 @@ namespace Dogfight
         Model skybox;
 
         /// <summary>
+        /// The portion of the crosshair without a center
+        /// </summary>
+        Texture2D crosshair;
+
+        /// <summary>
+        /// The portion of the crosshair with a center
+        /// </summary>
+        Texture2D crosshairCenter;
+
+        /// <summary>
         /// True if the chase camera should be attatched by a spring. False otherwise
         /// </summary>
         bool enableCamSpring;
@@ -93,7 +103,7 @@ namespace Dogfight
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = false;
         }
 
         protected override void Initialize()
@@ -126,6 +136,8 @@ namespace Dogfight
             // TODO: use this.Content to load your game content here
             this.shipModel = Content.Load<Model>("playership3");
             this.skybox = Content.Load<Model>("skybox");
+            this.crosshair = Content.Load<Texture2D>("CrosshairSmaller");
+            this.crosshairCenter = Content.Load<Texture2D>("CrosshairCenterSmaller");
         }
 
         /// <summary>
@@ -183,10 +195,17 @@ namespace Dogfight
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
             Debug.WriteLine("" + camera.Pos + ", " + player.pos);
             DrawModel(skybox, world * Matrix.CreateScale(10000f) * Matrix.CreateTranslation(player.pos), true);
             DrawModel(shipModel, player.World, false);
-            
+
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(crosshair, player.mousePosInCircle - new Vector2(crosshair.Width / 2, crosshair.Height / 2), Color.White);
+            _spriteBatch.Draw(crosshairCenter, player.mousePos - new Vector2(crosshairCenter.Width / 2, crosshairCenter.Height / 2), Color.White);
+            _spriteBatch.End();
+
             base.Draw(gameTime);
         }
 
