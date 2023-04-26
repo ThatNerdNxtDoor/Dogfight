@@ -11,26 +11,76 @@ namespace Dogfight
 {
     internal class Player
     {
+        /// <summary>
+        /// What is this?
+        /// </summary>
         private const float minimumAltitude = 5500.0f;
 
+        /// <summary>
+        /// The current position of the player's ship
+        /// </summary>
         public Vector3 pos;
+
+        /// <summary>
+        /// The current direction the player's ship should face in
+        /// </summary>
         public Vector3 dir;
+
+        /// <summary>
+        /// The current 'up' vector for the ship
+        /// </summary>
         public Vector3 up;
+
+        /// <summary>
+        /// The current velocity of the ship
+        /// </summary>
         public Vector3 velocity;
+
+        /// <summary>
+        /// The direction to the right of the player's ship
+        /// </summary>
         private Vector3 right;
         public Vector3 Right { get { return right; } }
 
+        /// <summary>
+        /// The mouse state
+        /// </summary>
         MouseState mState;
+
+        /// <summary>
+        /// The mouse's position
+        /// </summary>
         Vector2 mousePos;
 
+        /// <summary>
+        /// How quickly the ship rotates
+        /// </summary>
         private const float rotationRate = 1.5f;
+        /// <summary>
+        /// The mass of the ship
+        /// </summary>
         private const float mass = 1.0f;
+        /// <summary>
+        /// The force of moving the ship forward
+        /// </summary>
         private const float thrustForce = 24000.0f;
+        /// <summary>
+        /// What is this?
+        /// </summary>
         private const float dragForce = 0.97f;
 
+        /// <summary>
+        /// The world matrix of the ship
+        /// </summary>
         private Matrix world;
+        /// <summary>
+        /// The world matrix of the ship
+        /// </summary>
         public Matrix World { get { return world; } }
 
+        /// <summary>
+        /// Resets the ship's values to defaults
+        /// </summary>
         public void Reset()
         {
             pos = new Vector3(0, 250f, 0);
