@@ -124,7 +124,7 @@ namespace Dogfight
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            this.shipModel = Content.Load<Model>("playership");
+            this.shipModel = Content.Load<Model>("playership3");
             this.skybox = Content.Load<Model>("skybox");
         }
 
@@ -184,7 +184,7 @@ namespace Dogfight
 
             // TODO: Add your drawing code here
             Debug.WriteLine("" + camera.Pos + ", " + player.pos);
-            DrawModel(skybox, world * Matrix.CreateScale(10000f), true);
+            DrawModel(skybox, world * Matrix.CreateScale(10000f) * Matrix.CreateTranslation(player.pos), true);
             DrawModel(shipModel, player.World, false);
             base.Draw(gameTime);
         }
