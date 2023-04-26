@@ -199,7 +199,7 @@ namespace Dogfight
                     effect.EnableDefaultLighting();
                     if (skybox) {
                         effect.LightingEnabled = true;
-                        effect.AmbientLightColor = new Vector3(0f, 0f, 0f);
+                        effect.AmbientLightColor = new Vector3(.1f, .1f, .1f);
                     }
                     effect.World = world;
                     effect.View = camera.View;

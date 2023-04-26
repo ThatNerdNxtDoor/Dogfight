@@ -14,7 +14,7 @@ namespace Dogfight
         /// <summary>
         /// What is this?
         /// </summary>
-        private const float minimumAltitude = 5500.0f;
+        private const float altitudeBoundary = 100000.0f;
 
         /// <summary>
         /// The current position of the player's ship
@@ -56,16 +56,20 @@ namespace Dogfight
         /// How quickly the ship rotates
         /// </summary>
         private const float rotationRate = 1.5f;
+        
         /// <summary>
         /// The mass of the ship
         /// </summary>
         private const float mass = 1.0f;
+        
         /// <summary>
         /// The force of moving the ship forward
         /// </summary>
-        private const float thrustForce = 24000.0f;
+        private const float thrustForce = 12000.0f;
+        
         /// <summary>
-        /// What is this?
+        /// What is this? <- Mitch
+        /// It's the drag force factor to simulate drag so that the ship can slow down, Mitch.
         /// </summary>
         private const float dragForce = 0.97f;
 
@@ -83,7 +87,7 @@ namespace Dogfight
         /// </summary>
         public void Reset()
         {
-            pos = new Vector3(0, 250f, 0);
+            pos = new Vector3(0, 0, 0);
             dir = Vector3.Forward;
             up = Vector3.Up;
             right = Vector3.Right;
@@ -113,7 +117,7 @@ namespace Dogfight
             mousePos = new Vector2(mState.X, mState.Y);
             Vector2 center = new Vector2(graphicsDevice.PreferredBackBufferWidth / 2, graphicsDevice.PreferredBackBufferHeight / 2);
             float distanceFromCenter = Vector2.Distance(center, mousePos);
-            if (distanceFromCenter < 120) //Firing Range
+            if (distanceFromCenter < 150) //Firing Range
             {
                 foreach(Enemy enemy in enemyList)
                 {
@@ -163,19 +167,19 @@ namespace Dogfight
             velocity *= dragForce;
 
             pos += velocity * elapsed;
-            pos.Y = Math.Max(pos.Y, -minimumAltitude);
-            pos.Y = Math.Min(pos.Y, minimumAltitude);
-            pos.X = Math.Max(pos.X, -minimumAltitude);
-            pos.X = Math.Min(pos.X, minimumAltitude);
-            pos.Z = Math.Max(pos.Z, -minimumAltitude);
-            pos.Z = Math.Min(pos.Z, minimumAltitude);
+            pos.Y = Math.Max(pos.Y, -altitudeBoundary);
+            pos.Y = Math.Min(pos.Y, altitudeBoundary);
+            pos.X = Math.Max(pos.X, -altitudeBoundary);
+            pos.X = Math.Min(pos.X, altitudeBoundary);
+            pos.Z = Math.Max(pos.Z, -altitudeBoundary);
+            pos.Z = Math.Min(pos.Z, altitudeBoundary);
 
             //world matrix
             world = Matrix.Identity;
             world.Forward = dir;
             world.Up = up;
             world.Right = right;
-            world *= Matrix.CreateScale(100f);
+            world *= Matrix.CreateScale(500f);
             world.Translation = pos;
         }
     }

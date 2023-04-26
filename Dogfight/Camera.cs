@@ -56,7 +56,7 @@ namespace Dogfight
         /// <summary>
         /// The offset that the desired position moves away from the target's position
         /// </summary>
-        private Vector3 desiredPositionOffset = new Vector3(0, 2.0f, 2.0f);
+        private Vector3 desiredPositionOffset = new Vector3(0, .1f, .1f);
 
         /// <summary>
         /// The offset that the desired position moves away from the target's position
@@ -76,7 +76,7 @@ namespace Dogfight
         /// <summary>
         /// The offset that the lookAt position moves away from the target's position
         /// </summary>
-        private Vector3 lookAtOffset = new Vector3(0, 3.0f, 0);
+        private Vector3 lookAtOffset = new Vector3(0, 1.0f, 0);
 
         /// <summary>
         /// The offset that the lookAt position moves away from the target's position
@@ -90,7 +90,7 @@ namespace Dogfight
         /// <summary>
         /// Stiffness factor of spring
         /// </summary>
-        private float stiffness = 1500f;
+        private float stiffness = 5000f;
         public float Stiffness { get { return stiffness; } set { stiffness = value; } }
 
         /// <summary>
