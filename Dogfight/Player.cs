@@ -123,7 +123,7 @@ namespace Dogfight
                     }
                 }
             }
-            else { //Rotating 
+            else if (new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight).Contains(mState.Position)){ //Rotating 
                 rotationAmount.X = (mState.X - center.X) / 50;
                 rotationAmount.Y = (mState.Y - center.Y) / 50;
             }
