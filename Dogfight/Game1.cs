@@ -184,7 +184,7 @@ namespace Dogfight
             } else {
                 foreach (Enemy enemy in enemyList)
                 {
-                    enemy.Update(gameTime);
+                    enemy.Update(gameTime, player);
                 }
             }
             base.Update(gameTime);
@@ -200,6 +200,12 @@ namespace Dogfight
             Debug.WriteLine("" + camera.Pos + ", " + player.pos);
             DrawModel(skybox, world * Matrix.CreateScale(10000f) * Matrix.CreateTranslation(player.pos), true);
             DrawModel(shipModel, player.World, false);
+
+            foreach (Enemy enemy in enemyList)
+            {
+                //Todo: draw model for enemies
+            }
+
 
             _spriteBatch.Begin();
             _spriteBatch.Draw(crosshair, player.mousePosInCircle - new Vector2(crosshair.Width / 2, crosshair.Height / 2), Color.White);

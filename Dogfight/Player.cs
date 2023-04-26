@@ -138,7 +138,8 @@ namespace Dogfight
                 foreach(Enemy enemy in enemyList)
                 {
                     Vector2 enemyPos2D = new Vector2(view2D.Project(enemy.Pos, proj, view, globalWorld).X, view2D.Project(enemy.Pos, proj, view, globalWorld).Y);
-                    if (Vector2.Distance(enemyPos2D, mousePos) <= 20) {
+                    float distance = Vector2.Distance(enemyPos2D, mousePos);
+                    if (distance <= 100/(distance/10)) {
                         enemy.Die();
                     }
                 }
@@ -150,11 +151,6 @@ namespace Dogfight
             }
 
             rotationAmount = rotationAmount * rotationRate * elapsed;
-
-            //if (up.Y < 0)
-            //{
-            //    rotationAmount.X = -rotationAmount.X;
-            //}
 
             //Matrix rotationMatrix = Matrix.CreateFromAxisAngle(right, rotationAmount.Y) * Matrix.CreateRotationY(rotationAmount.X) * Matrix.CreateRotationZ(rotationAmount.Z);
             Matrix rotationMatrix = Matrix.CreateFromAxisAngle(right, rotationAmount.Y) * Matrix.CreateFromAxisAngle(up, rotationAmount.X) * Matrix.CreateFromAxisAngle(dir, rotationAmount.Z);
