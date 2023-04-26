@@ -105,11 +105,11 @@ namespace Dogfight
             Vector3 rotationAmount = new Vector3(0, 0, 0);
             if (keyboardState.IsKeyDown(Keys.A))
             {
-                rotationAmount.Z = 1.0f;
+                rotationAmount.Z = -1.0f;
             }
             if (keyboardState.IsKeyDown(Keys.D))
             {
-                rotationAmount.Z = -1.0f;
+                rotationAmount.Z = 1.0f;
             }
 
             //Todo: Add rotation with mouse

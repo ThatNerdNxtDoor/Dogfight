@@ -83,6 +83,8 @@ namespace Dogfight
             Vector3 rotationAmount = new Vector3(0, 0, 0);
 
             //To-do: Have the enemy face the player and go forwards the player until they enter a certain radius around the player, then stop rotating until it's outside of the radius.
+
+
             float distanceFromPlayer = Vector3.Distance(this.Pos, player.pos);
 
             rotationAmount = rotationAmount * rotationRate * elapsed;
