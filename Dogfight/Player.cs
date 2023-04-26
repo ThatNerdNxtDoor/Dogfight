@@ -124,18 +124,19 @@ namespace Dogfight
                 }
             }
             else if (new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight).Contains(mState.Position)){ //Rotating 
-                rotationAmount.X = (mState.X - center.X) / 50;
-                rotationAmount.Y = (mState.Y - center.Y) / 50;
+                rotationAmount.X = -(mState.X - center.X) / 100;
+                rotationAmount.Y = -(mState.Y - center.Y) / 100;
             }
 
             rotationAmount = rotationAmount * rotationRate * elapsed;
 
-            if (up.Y < 0)
-            {
-                rotationAmount.X = -rotationAmount.X;
-            }
+            //if (up.Y < 0)
+            //{
+            //    rotationAmount.X = -rotationAmount.X;
+            //}
 
-            Matrix rotationMatrix = Matrix.CreateFromAxisAngle(right, rotationAmount.Y) * Matrix.CreateRotationY(rotationAmount.X) * Matrix.CreateRotationZ(rotationAmount.Z);
+            //Matrix rotationMatrix = Matrix.CreateFromAxisAngle(right, rotationAmount.Y) * Matrix.CreateRotationY(rotationAmount.X) * Matrix.CreateRotationZ(rotationAmount.Z);
+            Matrix rotationMatrix = Matrix.CreateFromAxisAngle(right, rotationAmount.Y) * Matrix.CreateFromAxisAngle(up, rotationAmount.X) * Matrix.CreateFromAxisAngle(dir, rotationAmount.Z);
             dir = Vector3.TransformNormal(dir, rotationMatrix);
             up = Vector3.TransformNormal(up, rotationMatrix);
 
@@ -143,7 +144,7 @@ namespace Dogfight
             up.Normalize();
 
             right = Vector3.Cross(dir, up);
-            up = Vector3.Cross(right, dir);
+            //up = Vector3.Cross(right, dir);
 
             //ThrustAmount
             float thrustAmount = 0;

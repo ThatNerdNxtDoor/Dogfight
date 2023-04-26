@@ -186,6 +186,7 @@ namespace Dogfight
             Debug.WriteLine("" + camera.Pos + ", " + player.pos);
             DrawModel(skybox, world * Matrix.CreateScale(10000f) * Matrix.CreateTranslation(player.pos), true);
             DrawModel(shipModel, player.World, false);
+            
             base.Draw(gameTime);
         }
 
