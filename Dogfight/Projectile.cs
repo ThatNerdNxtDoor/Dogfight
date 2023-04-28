@@ -14,10 +14,35 @@ namespace Dogfight
         float speedFactor;
         Vector3 pos;
         Vector3 dir;
-        Vector3 velocity;
+        float velocity = 50f;
+        const float altitudeBoundary = 100000f;
 
-        public Projectile() {
+        public Projectile(Vector3 p, Vector3 d) {
+            pos = p;
+            dir = d;
+
+        }
+
+        public void Update(GameTime gameTime, Player player) {
+            pos += dir * velocity;
+
+            //Check if projectile hits player
+            if (Vector3.Distance(pos, player.pos) <= 1000f) {
+                
+            }
+
+            //Check if projectile has hit boundary
+            if (pos.X >= altitudeBoundary || pos.X <= -altitudeBoundary)
+            {
+
+            }
+            else if (pos.Y >= altitudeBoundary || pos.Y <= -altitudeBoundary)
+            {
+
+            }
+            else if (pos.Z >= altitudeBoundary || pos.Z <= -altitudeBoundary) {
             
+            }
         }
     }
 }

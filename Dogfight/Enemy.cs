@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,15 +31,17 @@ namespace Dogfight
         /// The current position of the enemy's ship
         /// </summary>
         Vector3 pos;
-        public Vector3 Pos { get; set; }
+        public Vector3 Pos { get { return pos; } set { pos = value; } }
 
         /// <summary>
         /// The current direction the enemy's ship should face in
         /// </summary>
         Vector3 dir;
-        public Vector3 Dir { get; set; }
+        public Vector3 Dir { get { return dir; } set { dir = value; } }
 
         float speedFactor;
+
+        float fireInterval;
 
         /// <summary>
         /// The current velocity of the ship
@@ -69,24 +72,63 @@ namespace Dogfight
 
         public Enemy(Vector3 p, Vector3 d, float s) {
             pos = p;
-            dir = Vector3.Forward;
+            dir = d;
             up = Vector3.Up;
             right = Vector3.Right;
             velocity = Vector3.Zero;
             speedFactor = s;
+            fireInterval = 1f;
         }
 
-        public void Update(GameTime gameTime, Player player)
+        public void Update(GameTime gameTime, Player player, List<Projectile> pList)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             Vector3 rotationAmount = new Vector3(0, 0, 0);
 
-            //To-do: Have the enemy face the player and go forwards the player until they enter a certain radius around the player, then stop rotating until it's outside of the radius.
+            //To-do: Have the enemy face the player and go forwards the player until they enter a certain radius around the player, then stop rotating and start firing until it's outside of the radius.
+            //This should give a strafing run effect
 
+            float distanceFromPlayer = Vector3.Distance(pos, player.pos);
+            Debug.WriteLine(distanceFromPlayer);
+            if (distanceFromPlayer <= 7000f) //Firing Range
+            {
+                if (fireInterval > 0f)
+                {
+                    fireInterval -= elapsed;
+                }
+                else {
+                    pList.Add(new Projectile(pos, dir));
+                    fireInterval = 1f;
+                }
+            }
+            else { //Rotating
+                Vector3 rotationTarget = pos - player.pos;
+                rotationTarget.Normalize();
+                if (rotationTarget.X > dir.X) {
+                    rotationAmount.X = 1f;
+                } else if (rotationTarget.X < dir.X)
+                {
+                    rotationAmount.X = -1f;
+                }
+                
+                if (rotationTarget.Y > dir.Y) {
+                    rotationAmount.Y = 1f;
+                } else if (rotationTarget.Y < dir.Y)
+                {
+                    rotationAmount.Y = -1f;
+                }
 
-            float distanceFromPlayer = Vector3.Distance(this.Pos, player.pos);
-
+                if (rotationTarget.Z > dir.Z)
+                {
+                    rotationAmount.Z = 1f;
+                }
+                else if (rotationTarget.Z < dir.Z)
+                {
+                    rotationAmount.Z = -1f;
+                }
+            }
+            
             rotationAmount = rotationAmount * rotationRate * elapsed;
 
             Matrix rotationMatrix = Matrix.CreateFromAxisAngle(right, rotationAmount.Y) * Matrix.CreateFromAxisAngle(up, rotationAmount.X) * Matrix.CreateFromAxisAngle(dir, rotationAmount.Z);
@@ -118,6 +160,8 @@ namespace Dogfight
             world.Right = right;
             world *= Matrix.CreateScale(500f);
             world.Translation = pos;
+
+            Debug.WriteLine("E: " + pos + dir + rotationAmount);
         }
 
         public void Die() {

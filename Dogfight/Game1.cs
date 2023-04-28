@@ -49,6 +49,8 @@ namespace Dogfight
         /// </summary>
         List<Enemy> enemyList = new List<Enemy>();
 
+        List<Projectile> projectileList = new List<Projectile>();
+
         /// <summary>
         /// The keyboard state of the previous iteration
         /// </summary>
@@ -63,6 +65,8 @@ namespace Dogfight
         /// The model of the player's ship
         /// </summary>
         Model shipModel;
+
+        Model enemyModel;
 
         /// <summary>
         /// The model of the skybox
@@ -118,7 +122,7 @@ namespace Dogfight
             camera.AspectRatio = (float)_graphics.GraphicsDevice.Viewport.Width / (float)_graphics.GraphicsDevice.Viewport.Height;
             
             enableCamSpring = true;
-            wave = 0;
+            wave = 1;
 
             view2D = new Viewport(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
 
@@ -135,6 +139,7 @@ namespace Dogfight
 
             // TODO: use this.Content to load your game content here
             this.shipModel = Content.Load<Model>("playership3");
+            this.enemyModel = Content.Load<Model>("enemyship2");
             this.skybox = Content.Load<Model>("skybox");
             this.crosshair = Content.Load<Texture2D>("CrosshairSmaller");
             this.crosshairCenter = Content.Load<Texture2D>("CrosshairCenterSmaller");
@@ -157,7 +162,38 @@ namespace Dogfight
         private void newWave(int waveNumber) {
             for (int i = 0; i < waveNumber; i++)
             {
-                enemyList.Add(new Enemy(new Vector3(0, 0, 0), new Vector3(0, 0, 0), (waveNumber / 5) + 1)); //Todo: Figure out placement of enemies
+                Random r = new Random();
+                int random = r.Next(0, 6);
+                float offset = (float)r.NextDouble() * 500.0f;
+                Vector3 spawnPos = new Vector3(0, 0, 0);
+                Vector3 spawnDir = new Vector3(0, 0, 0);
+                switch (random) {
+                    case 0: // Front
+                        spawnPos = new Vector3(90000f, offset - 250, offset - 250);
+                        spawnDir = new Vector3(-1, 0, 0);
+                        break;
+                    case 1: // Back
+                        spawnPos = new Vector3(-90000f, offset - 250, offset - 250);
+                        spawnDir = new Vector3(1, 0, 0);
+                        break;
+                    case 2: // Top
+                        spawnPos = new Vector3(offset - 250, 90000f, offset - 250);
+                        spawnDir = new Vector3(0, -1, 0);
+                        break;
+                    case 3: // Bottom
+                        spawnPos = new Vector3(offset - 250, -90000f, offset - 250);
+                        spawnDir = new Vector3(0, 1, 0);
+                        break;
+                    case 4: // Right
+                        spawnPos = new Vector3(offset - 250, offset - 250, 90000f);
+                        spawnDir = new Vector3(0, 0, -1);
+                        break;
+                    case 5: // Left
+                        spawnPos = new Vector3(offset - 250, offset - 250, -90000f);
+                        spawnDir = new Vector3(0, 0, 1);
+                        break;
+                }
+                enemyList.Add(new Enemy(spawnPos, spawnDir, (waveNumber / 5) + 1));
             }
         }
 
@@ -184,8 +220,13 @@ namespace Dogfight
             } else {
                 foreach (Enemy enemy in enemyList)
                 {
-                    enemy.Update(gameTime, player);
+                    enemy.Update(gameTime, player, projectileList);
                 }
+            }
+
+            foreach (Projectile p in projectileList)
+            {
+                p.Update(gameTime, player);
             }
             base.Update(gameTime);
         }
@@ -197,15 +238,16 @@ namespace Dogfight
             // TODO: Add your drawing code here
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            Debug.WriteLine("" + camera.Pos + ", " + player.pos);
+            //Debug.WriteLine("P: " + camera.Pos + ", " + player.pos);
             DrawModel(skybox, world * Matrix.CreateScale(10000f) * Matrix.CreateTranslation(player.pos), true);
             DrawModel(shipModel, player.World, false);
 
             foreach (Enemy enemy in enemyList)
             {
-                //Todo: draw model for enemies
+                DrawModel(enemyModel, enemy.World, true);
             }
 
+            //Todo: Draw projectiles
 
             _spriteBatch.Begin();
             _spriteBatch.Draw(crosshair, player.mousePosInCircle - new Vector2(crosshair.Width / 2, crosshair.Height / 2), Color.White);
@@ -215,16 +257,16 @@ namespace Dogfight
             base.Draw(gameTime);
         }
 
-        private void DrawModel(Model model, Matrix world, bool skybox)
+        private void DrawModel(Model model, Matrix world, bool light)
         {
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
-                    if (skybox) {
+                    if (light) {
                         effect.LightingEnabled = true;
-                        effect.AmbientLightColor = new Vector3(.1f, .1f, .1f);
+                        effect.AmbientLightColor = new Vector3(1f, 1f, 1f);
                     }
                     effect.World = world;
                     effect.View = camera.View;
