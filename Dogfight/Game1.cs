@@ -167,29 +167,30 @@ namespace Dogfight
                 float offset = (float)r.NextDouble() * 500.0f;
                 Vector3 spawnPos = new Vector3(0, 0, 0);
                 Vector3 spawnDir = new Vector3(0, 0, 0);
+                const float enemyStartingDistance = 10000f;
                 switch (random) {
                     case 0: // Front
-                        spawnPos = new Vector3(90000f, offset - 250, offset - 250);
+                        spawnPos = new Vector3(enemyStartingDistance, offset - 250, offset - 250);
                         spawnDir = new Vector3(-1, 0, 0);
                         break;
                     case 1: // Back
-                        spawnPos = new Vector3(-90000f, offset - 250, offset - 250);
+                        spawnPos = new Vector3(-enemyStartingDistance, offset - 250, offset - 250);
                         spawnDir = new Vector3(1, 0, 0);
                         break;
                     case 2: // Top
-                        spawnPos = new Vector3(offset - 250, 90000f, offset - 250);
+                        spawnPos = new Vector3(offset - 250, enemyStartingDistance, offset - 250);
                         spawnDir = new Vector3(0, -1, 0);
                         break;
                     case 3: // Bottom
-                        spawnPos = new Vector3(offset - 250, -90000f, offset - 250);
+                        spawnPos = new Vector3(offset - 250, -enemyStartingDistance, offset - 250);
                         spawnDir = new Vector3(0, 1, 0);
                         break;
                     case 4: // Right
-                        spawnPos = new Vector3(offset - 250, offset - 250, 90000f);
+                        spawnPos = new Vector3(offset - 250, offset - 250, enemyStartingDistance);
                         spawnDir = new Vector3(0, 0, -1);
                         break;
                     case 5: // Left
-                        spawnPos = new Vector3(offset - 250, offset - 250, -90000f);
+                        spawnPos = new Vector3(offset - 250, offset - 250, -enemyStartingDistance);
                         spawnDir = new Vector3(0, 0, 1);
                         break;
                 }
@@ -233,13 +234,13 @@ namespace Dogfight
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             //Debug.WriteLine("P: " + camera.Pos + ", " + player.pos);
-            DrawModel(skybox, world * Matrix.CreateScale(10000f) * Matrix.CreateTranslation(player.pos), true);
+            DrawModel(skybox, world * Matrix.CreateScale(60000f) * Matrix.CreateTranslation(player.pos), true);
             DrawModel(shipModel, player.World, false);
 
             foreach (Enemy enemy in enemyList)

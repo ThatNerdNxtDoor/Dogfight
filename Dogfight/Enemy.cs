@@ -10,7 +10,7 @@ namespace Dogfight
 {
     internal class Enemy
     {
-        private const float altitudeBoundary = 100000.0f;
+        private const float altitudeBoundary = 1000000.0f;
 
         /// <summary>
         /// The current 'up' vector for the ship
@@ -23,7 +23,7 @@ namespace Dogfight
         public Vector3 right;
 
         /// <summary>
-        /// How quickly the ship rotates
+        /// How quickly the ship rotates (in radians / second)
         /// </summary>
         private const float rotationRate = 1.5f;
 
@@ -84,14 +84,16 @@ namespace Dogfight
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            Vector3 rotationAmount = new Vector3(0, 0, 0);
+            //Vector3 rotationAmount = new Vector3(0, 0, 0);
 
             //To-do: Have the enemy face the player and go forwards the player until they enter a certain radius around the player, then stop rotating and start firing until it's outside of the radius.
             //This should give a strafing run effect
 
             float distanceFromPlayer = Vector3.Distance(pos, player.pos);
-            Debug.WriteLine(distanceFromPlayer);
-            if (distanceFromPlayer <= 7000f) //Firing Range
+
+            Matrix rotationMatrix;
+
+            if (distanceFromPlayer <= 21000f) //Firing Range
             {
                 if (fireInterval > 0f)
                 {
@@ -101,11 +103,33 @@ namespace Dogfight
                     pList.Add(new Projectile(pos, dir));
                     fireInterval = 1f;
                 }
+
+                rotationMatrix = Matrix.Identity;
             }
             else { //Rotating
-                Vector3 rotationTarget = pos - player.pos;
+                Vector3 rotationTarget = player.pos - this.pos;
                 rotationTarget.Normalize();
-                if (rotationTarget.X > dir.X) {
+
+                Vector3 rotationAxis = Vector3.Cross(this.dir, rotationTarget); //The axis to rotate the ship's model around
+
+                float rotationAmount = (float)Math.Acos(d: Vector3.Dot(rotationTarget, dir)); //The amount the ship would have to rotate to point toward the player ship
+                /* The angle to rotate is the angle between the direction vector and the rotation target
+                 * (Dot product divided by magnitudes, which are both one anyway as these are normalized)
+                 */
+
+                Debug.WriteLine("E: " + pos + dir + rotationAmount);
+
+                //Now we apply the rotation rate
+                float rotationRateAmount = rotationRate * elapsed; //The amount the ship should rotate, based on it's rotation speed
+                //If the rotation amount is bigger (i.e. faster), then we should use the rotation rate. Otherwise, use the rotation amount so we don't overshoot
+                if (rotationRateAmount < rotationAmount)
+                {
+                    rotationAmount = rotationRateAmount;
+                }
+
+                rotationMatrix = Matrix.CreateFromAxisAngle(rotationAxis, rotationRateAmount);
+
+                /*if (rotationTarget.X > dir.X) {
                     rotationAmount.X = 1f;
                 } else if (rotationTarget.X < dir.X)
                 {
@@ -126,12 +150,12 @@ namespace Dogfight
                 else if (rotationTarget.Z < dir.Z)
                 {
                     rotationAmount.Z = -1f;
-                }
+                }*/
             }
             
-            rotationAmount = rotationAmount * rotationRate * elapsed;
+            //rotationAmount = rotationAmount * rotationRate * elapsed;
 
-            Matrix rotationMatrix = Matrix.CreateFromAxisAngle(right, rotationAmount.Y) * Matrix.CreateFromAxisAngle(up, rotationAmount.X) * Matrix.CreateFromAxisAngle(dir, rotationAmount.Z);
+            //Matrix rotationMatrix = Matrix.CreateFromAxisAngle(right, rotationAmount.Y) * Matrix.CreateFromAxisAngle(up, rotationAmount.X) * Matrix.CreateFromAxisAngle(dir, rotationAmount.Z);
             dir = Vector3.TransformNormal(dir, rotationMatrix);
             up = Vector3.TransformNormal(up, rotationMatrix);
 
@@ -161,7 +185,6 @@ namespace Dogfight
             world *= Matrix.CreateScale(500f);
             world.Translation = pos;
 
-            Debug.WriteLine("E: " + pos + dir + rotationAmount);
         }
 
         public void Die() {

@@ -157,7 +157,7 @@ namespace Dogfight
         /// <summary>
         /// The distance to the far clipping plane of the camera
         /// </summary>
-        private float farPlaneDist = 1000000.0f;
+        private float farPlaneDist = 2000000.0f;
 
         /// <summary>
         /// The distance to the far clipping plane of the camera
