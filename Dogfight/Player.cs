@@ -136,12 +136,16 @@ namespace Dogfight
             if (distanceFromCenter < 150) //Firing Range
             {
                 mousePosInCircle = mousePos;
-                foreach(Enemy enemy in enemyList)
+                for (int i = 0; i < enemyList.Count; i++)
                 {
+                    Enemy enemy = enemyList[i];
+                    float distanceToPlayer = Vector3.Distance(pos, enemy.Pos);
                     Vector2 enemyPos2D = new Vector2(view2D.Project(enemy.Pos, proj, view, globalWorld).X, view2D.Project(enemy.Pos, proj, view, globalWorld).Y);
-                    float distance = Vector2.Distance(enemyPos2D, mousePos);
-                    if (distance <= 100/(distance/10)) {
-                        enemy.Die();
+                    float distanceToCursor = Vector2.Distance(enemyPos2D, mousePos);
+                    if (distanceToCursor <= 10000/(distanceToPlayer/10)) {
+                        enemyList.RemoveAt(i);
+                        i--;
+                        continue;
                     }
                 }
             }

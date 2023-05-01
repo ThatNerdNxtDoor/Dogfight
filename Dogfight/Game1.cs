@@ -91,7 +91,7 @@ namespace Dogfight
         /// <summary>
         /// The player's current health
         /// </summary>
-        public int health;
+        int health;
 
         /// <summary>
         /// The enemies's speed
@@ -102,7 +102,9 @@ namespace Dogfight
         /// The current wave
         /// </summary>
         public int wave;
-        
+
+        bool lose;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -123,6 +125,7 @@ namespace Dogfight
             
             enableCamSpring = true;
             wave = 1;
+            health = 3;
 
             view2D = new Viewport(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
 
@@ -209,25 +212,63 @@ namespace Dogfight
             lastkeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
 
-            player.Update(gameTime, _graphics, enemyList, view2D, proj, view, world);
-
-            UpdateChaseTarget();
-            camera.Update(gameTime);
-
-            //Check if we need to start a new wave. If not, update the enemies
-            if (enemyList.Count == 0) {
-                wave++;
-                newWave(wave);
-            } else {
-                foreach (Enemy enemy in enemyList)
-                {
-                    enemy.Update(gameTime, player, projectileList);
-                }
-            }
-
-            foreach (Projectile p in projectileList)
+            if (!lose)
             {
-                p.Update(gameTime, player);
+                player.Update(gameTime, _graphics, enemyList, view2D, proj, view, world);
+
+                UpdateChaseTarget();
+                camera.Update(gameTime);
+
+                //Check if we need to start a new wave. If not, update the enemies
+                if (enemyList.Count == 0)
+                {
+                    wave++;
+                    newWave(wave);
+                }
+                else
+                {
+                    foreach (Enemy enemy in enemyList)
+                    {
+                        enemy.Update(gameTime, player, projectileList);
+                    }
+                }
+
+                for (int p = 0; p < projectileList.Count; p++)
+                {
+                    Projectile pro = projectileList[p];
+                    pro.Update(gameTime);
+                    //Check if projectile has hit boundary
+                    if (pro.pos.X >= 1000000.0f || pro.pos.X <= -1000000.0f)
+                    {
+                        projectileList.RemoveAt(p);
+                        p--;
+                        continue;
+                    }
+                    else if (pro.pos.Y >= 1000000.0f || pro.pos.Y <= -1000000.0f)
+                    {
+                        projectileList.RemoveAt(p);
+                        p--;
+                        continue;
+                    }
+                    else if (pro.pos.Z >= 1000000.0f || pro.pos.Z <= -1000000.0f)
+                    {
+                        projectileList.RemoveAt(p);
+                        p--;
+                        continue;
+                    }
+                    //Check if projectile hits player
+                    if (Vector3.Distance(pro.pos, player.pos) <= 500f)
+                    {
+                        health--;
+                        if (health <= 0)
+                        {
+                            lose = true;
+                        }
+                        projectileList.RemoveAt(p);
+                        p--;
+                        continue;
+                    }
+                }
             }
             base.Update(gameTime);
         }

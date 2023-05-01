@@ -12,7 +12,7 @@ namespace Dogfight
     internal class Projectile
     {
         float speedFactor;
-        Vector3 pos;
+        public Vector3 pos;
         Vector3 dir;
         float velocity = 50f;
         const float altitudeBoundary = 100000f;
@@ -23,26 +23,8 @@ namespace Dogfight
 
         }
 
-        public void Update(GameTime gameTime, Player player) {
+        public void Update(GameTime gameTime) {
             pos += dir * velocity;
-
-            //Check if projectile hits player
-            if (Vector3.Distance(pos, player.pos) <= 1000f) {
-                
-            }
-
-            //Check if projectile has hit boundary
-            if (pos.X >= altitudeBoundary || pos.X <= -altitudeBoundary)
-            {
-
-            }
-            else if (pos.Y >= altitudeBoundary || pos.Y <= -altitudeBoundary)
-            {
-
-            }
-            else if (pos.Z >= altitudeBoundary || pos.Z <= -altitudeBoundary) {
-            
-            }
         }
     }
 }
