@@ -66,7 +66,15 @@ namespace Dogfight
         /// </summary>
         Model shipModel;
 
+        /// <summary>
+        /// The model of the enemy's ship
+        /// </summary>
         Model enemyModel;
+
+        /// <summary>
+        /// The model of the projectile
+        /// </summary>
+        Model projectileModel;
 
         /// <summary>
         /// The model of the skybox
@@ -144,6 +152,7 @@ namespace Dogfight
             this.shipModel = Content.Load<Model>("playership3");
             this.enemyModel = Content.Load<Model>("enemyship2");
             this.skybox = Content.Load<Model>("skybox");
+            this.projectileModel = Content.Load<Model>("projectile");
             this.crosshair = Content.Load<Texture2D>("CrosshairSmaller");
             this.crosshairCenter = Content.Load<Texture2D>("CrosshairCenterSmaller");
         }
@@ -287,6 +296,11 @@ namespace Dogfight
             foreach (Enemy enemy in enemyList)
             {
                 DrawModel(enemyModel, enemy.World, true);
+            }
+            foreach(Projectile p in projectileList)
+            {
+                //To do: Uncomment when p.world or somethin similar exists
+                //DrawModel(projectileModel, p.world, true); 
             }
 
             //Todo: Draw projectiles
