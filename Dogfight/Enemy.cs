@@ -117,7 +117,7 @@ namespace Dogfight
                  * (Dot product divided by magnitudes, which are both one anyway as these are normalized)
                  */
 
-                Debug.WriteLine("E: " + pos + dir + rotationAmount);
+                //Debug.WriteLine("E: " + pos + dir + rotationAmount);
 
                 //Now we apply the rotation rate
                 float rotationRateAmount = rotationRate * elapsed; //The amount the ship should rotate, based on it's rotation speed
@@ -128,29 +128,6 @@ namespace Dogfight
                 }
 
                 rotationMatrix = Matrix.CreateFromAxisAngle(rotationAxis, rotationRateAmount);
-
-                /*if (rotationTarget.X > dir.X) {
-                    rotationAmount.X = 1f;
-                } else if (rotationTarget.X < dir.X)
-                {
-                    rotationAmount.X = -1f;
-                }
-                
-                if (rotationTarget.Y > dir.Y) {
-                    rotationAmount.Y = 1f;
-                } else if (rotationTarget.Y < dir.Y)
-                {
-                    rotationAmount.Y = -1f;
-                }
-
-                if (rotationTarget.Z > dir.Z)
-                {
-                    rotationAmount.Z = 1f;
-                }
-                else if (rotationTarget.Z < dir.Z)
-                {
-                    rotationAmount.Z = -1f;
-                }*/
             }
             
             //rotationAmount = rotationAmount * rotationRate * elapsed;

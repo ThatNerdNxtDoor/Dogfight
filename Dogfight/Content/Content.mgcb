@@ -56,6 +56,13 @@
 /processorParam:TextureFormat=Compressed
 /build:enemyship2.fbx
 
+#begin galleryFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:galleryFont.spritefont
+
 #begin playership3.fbx
 /importer:FbxImporter
 /processor:ModelProcessor

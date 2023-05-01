@@ -91,6 +91,8 @@ namespace Dogfight
         /// </summary>
         Texture2D crosshairCenter;
 
+        SpriteFont gameFont;
+
         /// <summary>
         /// True if the chase camera should be attatched by a spring. False otherwise
         /// </summary>
@@ -155,6 +157,7 @@ namespace Dogfight
             this.projectileModel = Content.Load<Model>("projectile");
             this.crosshair = Content.Load<Texture2D>("CrosshairSmaller");
             this.crosshairCenter = Content.Load<Texture2D>("CrosshairCenterSmaller");
+            this.gameFont = Content.Load<SpriteFont>("galleryFont");
         }
 
         /// <summary>
@@ -179,7 +182,7 @@ namespace Dogfight
                 float offset = (float)r.NextDouble() * 500.0f;
                 Vector3 spawnPos = new Vector3(0, 0, 0);
                 Vector3 spawnDir = new Vector3(0, 0, 0);
-                const float enemyStartingDistance = 10000f;
+                const float enemyStartingDistance = 90000f;
                 switch (random) {
                     case 0: // Front
                         spawnPos = new Vector3(enemyStartingDistance, offset - 250, offset - 250);
@@ -223,7 +226,7 @@ namespace Dogfight
 
             if (!lose)
             {
-                player.Update(gameTime, _graphics, enemyList, view2D, proj, view, world);
+                player.Update(gameTime, _graphics, enemyList, view2D, camera.projectionView, camera.View, world);
 
                 UpdateChaseTarget();
                 camera.Update(gameTime);
@@ -290,30 +293,36 @@ namespace Dogfight
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             //Debug.WriteLine("P: " + camera.Pos + ", " + player.pos);
-            DrawModel(skybox, world * Matrix.CreateScale(60000f) * Matrix.CreateTranslation(player.pos), true);
-            DrawModel(shipModel, player.World, false);
-
+            DrawModel(skybox, world * Matrix.CreateScale(60000f) * Matrix.CreateTranslation(player.pos), true, 1f);
+            if (!lose)
+            {
+                DrawModel(shipModel, player.World, false, 0f);
+            }
+            int i = 0;
             foreach (Enemy enemy in enemyList)
             {
-                DrawModel(enemyModel, enemy.World, true);
+                DrawModel(enemyModel, enemy.World, true, 255f);
+                Debug.WriteLine("Enemy Rendered " + i);
+                i++;
             }
             foreach(Projectile p in projectileList)
             {
-                //To do: Uncomment when p.world or somethin similar exists
-                //DrawModel(projectileModel, p.world, true); 
+                DrawModel(projectileModel, p.world, true, 255f);
             }
-
-            //Todo: Draw projectiles
 
             _spriteBatch.Begin();
             _spriteBatch.Draw(crosshair, player.mousePosInCircle - new Vector2(crosshair.Width / 2, crosshair.Height / 2), Color.White);
             _spriteBatch.Draw(crosshairCenter, player.mousePos - new Vector2(crosshairCenter.Width / 2, crosshairCenter.Height / 2), Color.White);
+            if (lose)
+            {
+                _spriteBatch.DrawString(gameFont, "-GAME OVER-", new Vector2(300, 100), Color.DimGray);
+            }
             _spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
-        private void DrawModel(Model model, Matrix world, bool light)
+        private void DrawModel(Model model, Matrix world, bool light, float lightValue)
         {
             foreach (ModelMesh mesh in model.Meshes)
             {
@@ -322,11 +331,12 @@ namespace Dogfight
                     effect.EnableDefaultLighting();
                     if (light) {
                         effect.LightingEnabled = true;
-                        effect.AmbientLightColor = new Vector3(1f, 1f, 1f);
+                        effect.AmbientLightColor = new Vector3(lightValue, lightValue, lightValue);
                     }
                     effect.World = world;
                     effect.View = camera.View;
                     effect.Projection = camera.projectionView;
+                    effect.Alpha = 1;
                 }
                 mesh.Draw();
             }

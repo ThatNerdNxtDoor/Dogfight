@@ -87,6 +87,8 @@ namespace Dogfight
         /// </summary>
         public Matrix World { get { return world; } }
 
+        bool mReleasedLeft = true;
+
         /// <summary>
         /// Resets the ship's values to defaults
         /// </summary>
@@ -136,17 +138,27 @@ namespace Dogfight
             if (distanceFromCenter < 150) //Firing Range
             {
                 mousePosInCircle = mousePos;
-                for (int i = 0; i < enemyList.Count; i++)
+                if (mState.LeftButton == ButtonState.Pressed && mReleasedLeft == true)
                 {
-                    Enemy enemy = enemyList[i];
-                    float distanceToPlayer = Vector3.Distance(pos, enemy.Pos);
-                    Vector2 enemyPos2D = new Vector2(view2D.Project(enemy.Pos, proj, view, globalWorld).X, view2D.Project(enemy.Pos, proj, view, globalWorld).Y);
-                    float distanceToCursor = Vector2.Distance(enemyPos2D, mousePos);
-                    if (distanceToCursor <= 10000/(distanceToPlayer/10)) {
-                        enemyList.RemoveAt(i);
-                        i--;
-                        continue;
+                    for (int i = 0; i < enemyList.Count; i++)
+                    {
+                        Enemy enemy = enemyList[i];
+                        float distanceToPlayer = Vector3.Distance(pos, enemy.Pos);
+                        Vector2 enemyPos2D = new Vector2(view2D.Project(enemy.Pos, proj, view, globalWorld).X, view2D.Project(enemy.Pos, proj, view, globalWorld).Y);
+                        float distanceToCursor = Vector2.Distance(enemyPos2D, mousePos);
+                        Debug.WriteLine(enemyPos2D);
+                        if (distanceToCursor <= 1000 / (distanceToPlayer / 100f))
+                        {
+                            enemyList.RemoveAt(i);
+                            i--;
+                            break;
+                        }
                     }
+                    mReleasedLeft = false;
+                }
+                if (mState.LeftButton == ButtonState.Released)
+                {
+                    mReleasedLeft = true;
                 }
             }
             else if (new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight).Contains(mState.Position)){ //Rotating 
