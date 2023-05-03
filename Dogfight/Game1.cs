@@ -179,33 +179,33 @@ namespace Dogfight
             {
                 Random r = new Random();
                 int random = r.Next(0, 6);
-                float offset = (float)r.NextDouble() * 500.0f;
+                float offset = (float)r.NextDouble() * 50000.0f;
                 Vector3 spawnPos = new Vector3(0, 0, 0);
                 Vector3 spawnDir = new Vector3(0, 0, 0);
                 const float enemyStartingDistance = 90000f;
                 switch (random) {
                     case 0: // Front
-                        spawnPos = new Vector3(enemyStartingDistance, offset - 250, offset - 250);
+                        spawnPos = new Vector3(enemyStartingDistance, offset - 25000, offset - 25000);
                         spawnDir = new Vector3(-1, 0, 0);
                         break;
                     case 1: // Back
-                        spawnPos = new Vector3(-enemyStartingDistance, offset - 250, offset - 250);
+                        spawnPos = new Vector3(-enemyStartingDistance, offset - 25000, offset - 25000);
                         spawnDir = new Vector3(1, 0, 0);
                         break;
                     case 2: // Top
-                        spawnPos = new Vector3(offset - 250, enemyStartingDistance, offset - 250);
+                        spawnPos = new Vector3(offset - 25000, enemyStartingDistance, offset - 25000);
                         spawnDir = new Vector3(0, -1, 0);
                         break;
                     case 3: // Bottom
-                        spawnPos = new Vector3(offset - 250, -enemyStartingDistance, offset - 250);
+                        spawnPos = new Vector3(offset - 25000, -enemyStartingDistance, offset - 25000);
                         spawnDir = new Vector3(0, 1, 0);
                         break;
                     case 4: // Right
-                        spawnPos = new Vector3(offset - 250, offset - 250, enemyStartingDistance);
+                        spawnPos = new Vector3(offset - 25000, offset - 25000, enemyStartingDistance);
                         spawnDir = new Vector3(0, 0, -1);
                         break;
                     case 5: // Left
-                        spawnPos = new Vector3(offset - 250, offset - 250, -enemyStartingDistance);
+                        spawnPos = new Vector3(offset - 25000, offset - 25000, -enemyStartingDistance);
                         spawnDir = new Vector3(0, 0, 1);
                         break;
                 }

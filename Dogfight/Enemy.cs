@@ -73,7 +73,9 @@ namespace Dogfight
         public Enemy(Vector3 p, Vector3 d, float s) {
             pos = p;
             dir = d;
+            dir.Normalize();
             up = Vector3.Up * d;
+            up.Normalize();
             right = Vector3.Right * d;
             velocity = Vector3.Zero;
             speedFactor = s;
