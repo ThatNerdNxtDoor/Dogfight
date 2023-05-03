@@ -16,7 +16,8 @@ namespace Dogfight
         Vector3 dir;
         float velocity = 50f;
         const float altitudeBoundary = 100000f;
-        public Matrix world;
+        private Matrix world;
+        public Matrix World { get { return world; } }
 
         public Projectile(Vector3 p, Vector3 d) {
             pos = p;
@@ -27,6 +28,8 @@ namespace Dogfight
             pos += dir * velocity;
             world = Matrix.Identity;
             world.Forward = dir;
+            world.Up = Vector3.Cross(dir, Vector3.Up);
+            world.Right = Vector3.Cross(dir, Vector3.Right);
             world *= Matrix.CreateScale(1500f);
             world.Translation = pos;
         }

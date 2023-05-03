@@ -73,8 +73,8 @@ namespace Dogfight
         public Enemy(Vector3 p, Vector3 d, float s) {
             pos = p;
             dir = d;
-            up = Vector3.Up;
-            right = Vector3.Right;
+            up = Vector3.Up * d;
+            right = Vector3.Right * d;
             velocity = Vector3.Zero;
             speedFactor = s;
             fireInterval = 1f;
@@ -161,11 +161,6 @@ namespace Dogfight
             world.Right = right;
             world *= Matrix.CreateScale(500f);
             world.Translation = pos;
-
-        }
-
-        public void Die() {
-            
         }
     }
 }

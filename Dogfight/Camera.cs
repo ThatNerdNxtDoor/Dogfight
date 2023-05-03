@@ -147,7 +147,7 @@ namespace Dogfight
         /// <summary>
         /// The distance to the close clipping plane of the camera
         /// </summary>
-        private float nearPlaneDist = 1.0f;
+        private float nearPlaneDist = 0.01f;
 
         /// <summary>
         /// The distance to the close clipping plane of the camera

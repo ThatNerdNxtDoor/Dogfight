@@ -151,9 +151,9 @@ namespace Dogfight
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            this.skybox = Content.Load<Model>("skybox");
             this.shipModel = Content.Load<Model>("playership3");
             this.enemyModel = Content.Load<Model>("enemyship2");
-            this.skybox = Content.Load<Model>("skybox");
             this.projectileModel = Content.Load<Model>("projectile");
             this.crosshair = Content.Load<Texture2D>("CrosshairSmaller");
             this.crosshairCenter = Content.Load<Texture2D>("CrosshairCenterSmaller");
@@ -209,6 +209,8 @@ namespace Dogfight
                         spawnDir = new Vector3(0, 0, 1);
                         break;
                 }
+                spawnDir = player.pos - spawnPos;
+                spawnDir.Normalize();
                 enemyList.Add(new Enemy(spawnPos, spawnDir, (waveNumber / 5) + 1));
             }
         }
@@ -291,6 +293,7 @@ namespace Dogfight
 
             // TODO: Add your drawing code here
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
             //Debug.WriteLine("P: " + camera.Pos + ", " + player.pos);
             DrawModel(skybox, world * Matrix.CreateScale(60000f) * Matrix.CreateTranslation(player.pos), true, 1f);
@@ -298,16 +301,13 @@ namespace Dogfight
             {
                 DrawModel(shipModel, player.World, false, 0f);
             }
-            int i = 0;
             foreach (Enemy enemy in enemyList)
             {
                 DrawModel(enemyModel, enemy.World, true, 255f);
-                Debug.WriteLine("Enemy Rendered " + i);
-                i++;
             }
             foreach(Projectile p in projectileList)
             {
-                DrawModel(projectileModel, p.world, true, 255f);
+                DrawModel(projectileModel, p.World, true, 255f);
             }
 
             _spriteBatch.Begin();
@@ -334,6 +334,10 @@ namespace Dogfight
                         effect.AmbientLightColor = new Vector3(lightValue, lightValue, lightValue);
                     }
                     effect.World = world;
+                    if (model == enemyModel)
+                    {
+                        Debug.WriteLine(effect.World.ToString());
+                    }
                     effect.View = camera.View;
                     effect.Projection = camera.projectionView;
                     effect.Alpha = 1;
