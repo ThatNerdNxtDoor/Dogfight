@@ -82,6 +82,11 @@ namespace Dogfight
         Model skybox;
 
         /// <summary>
+        /// The box that is drawn around the enemy
+        /// </summary>
+        private Texture2D _enemyBox;
+
+        /// <summary>
         /// The portion of the crosshair without a center
         /// </summary>
         Texture2D crosshair;
@@ -91,6 +96,9 @@ namespace Dogfight
         /// </summary>
         Texture2D crosshairCenter;
 
+        /// <summary>
+        /// The main font used for the games UI
+        /// </summary>
         SpriteFont gameFont;
 
         /// <summary>
@@ -157,7 +165,8 @@ namespace Dogfight
             this.projectileModel = Content.Load<Model>("projectile");
             this.crosshair = Content.Load<Texture2D>("CrosshairSmaller");
             this.crosshairCenter = Content.Load<Texture2D>("CrosshairCenterSmaller");
-            this.gameFont = Content.Load<SpriteFont>("galleryFont");
+            this._enemyBox = Content.Load<Texture2D>("redBox");
+            this.gameFont = Content.Load<SpriteFont>("uifont");
         }
 
         /// <summary>
@@ -313,6 +322,25 @@ namespace Dogfight
             _spriteBatch.Begin();
             _spriteBatch.Draw(crosshair, player.mousePosInCircle - new Vector2(crosshair.Width / 2, crosshair.Height / 2), Color.White);
             _spriteBatch.Draw(crosshairCenter, player.mousePos - new Vector2(crosshairCenter.Width / 2, crosshairCenter.Height / 2), Color.White);
+
+            //Draw UI text
+            _spriteBatch.DrawString(gameFont, "WAVE: " + this.wave, new Vector2(5, 5), Color.AntiqueWhite);
+            Vector2 lifeStringMeasure = gameFont.MeasureString("LIFE: " + this.health);
+            _spriteBatch.DrawString(gameFont, "LIFE: " + this.health, new Vector2(_graphics.PreferredBackBufferWidth - 5 - lifeStringMeasure.X, 5), Color.AntiqueWhite);
+            Vector2 WSStringMeasure = gameFont.MeasureString("W: Accelerate\nS: Slow Down");
+            _spriteBatch.DrawString(gameFont, "W: Accelerate\nS: Slow Down", new Vector2(5, _graphics.PreferredBackBufferHeight - 5 - WSStringMeasure.Y), Color.AntiqueWhite);
+            Vector2 ADStringMeasure = gameFont.MeasureString("A: Rotate Left\nD: Rotate Right");
+            _spriteBatch.DrawString(gameFont, "A: Rotate Left\nD: Rotate Right", new Vector2(_graphics.PreferredBackBufferWidth - 5 - ADStringMeasure.X, _graphics.PreferredBackBufferHeight - 5 - ADStringMeasure.Y), Color.AntiqueWhite);
+            
+            foreach(Enemy e in enemyList)
+            {
+                Vector3 projection3 = view2D.Project(e.Pos, camera.projectionView, camera.View, this.world);
+                if(projection3.Z < 1)
+                {
+                    _spriteBatch.Draw(this._enemyBox, new Vector2(projection3.X - 16, projection3.Y - 16), Color.White);
+                }
+            }
+
             if (lose)
             {
                 _spriteBatch.DrawString(gameFont, "-GAME OVER-", new Vector2(300, 100), Color.DimGray);
