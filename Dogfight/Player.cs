@@ -163,8 +163,8 @@ namespace Dogfight
             }
             else if (new Rectangle(0, 0, graphicsDevice.PreferredBackBufferWidth, graphicsDevice.PreferredBackBufferHeight).Contains(mState.Position)){ //Rotating 
                 _calculateMousePosInCircle(center, mousePos, 150);
-                rotationAmount.X = -(mState.X - center.X) / 100;
-                rotationAmount.Y = -(mState.Y - center.Y) / 100;
+                rotationAmount.X = (mousePosInCircle.X - mState.X) / 100;
+                rotationAmount.Y = (mousePosInCircle.Y - mState.Y) / 56.25f;
             }
 
             rotationAmount = rotationAmount * rotationRate * elapsed;
