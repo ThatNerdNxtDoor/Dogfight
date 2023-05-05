@@ -343,7 +343,7 @@ namespace Dogfight
 
             if (lose)
             {
-                _spriteBatch.DrawString(gameFont, "-GAME OVER-", new Vector2(300, 100), Color.DimGray);
+                _spriteBatch.DrawString(gameFont, "::GAME OVER::", new Vector2(300, 100), Color.DimGray);
             }
             _spriteBatch.End();
 
