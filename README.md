@@ -1,0 +1,1 @@
+This is the final project for CSC 316 made in collaboration by Isaiah Thompson and Mitchell Playforth. This project is a simple 3D game in which the player is a spaceship flying around and shooting down incoming enemy ships.
